@@ -96,6 +96,7 @@ jobs:
       - name: Report code coverage
         uses: zgosalvez/github-actions-report-lcov@v3
         with:
+          title-prefix: "<< Flutter >>"
           coverage-files: ${{inputs.working_directory}}/coverage/lcov.info
           minimum-coverage: ${{inputs.min_coverage}}
           artifact-name: code-coverage-report

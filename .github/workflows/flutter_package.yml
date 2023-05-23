@@ -90,6 +90,9 @@ jobs:
 
       - name: 🧪 Run Tests
         run: very_good test -j ${{inputs.concurrency}} ${{(inputs.test_recursion && '--recursive') || ''}} ${{(inputs.test_optimization && '--optimization') || '--no-optimization'}} --coverage --test-randomize-ordering-seed random
+        
+      - name: ✨ Remove generated code coverage
+        run: dart run remove_from_coverage -f coverage/lcov.info -r .g.dart$
 
       - name: Setup LCOV
         uses: hrishikesh-kadam/setup-lcov@v1

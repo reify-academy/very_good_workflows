@@ -55,6 +55,10 @@ on:
         required: false
         type: string
         default: "."
+      prefix:
+        required: false
+        type: string
+        default: "dart package"
 
 jobs:
   build:
@@ -91,9 +95,16 @@ jobs:
           dart pub global activate coverage 1.2.0
           dart test -j ${{inputs.concurrency}} --coverage=coverage --platform=${{inputs.platform}} && dart pub global run coverage:format_coverage --lcov ${{(inputs.check_ignore && '--check-ignore') || ''}} --in=coverage --out=coverage/lcov.info --packages=.dart_tool/package_config.json --report-on=${{inputs.report_on}}
 
-      - name: 📊 Check Code Coverage
-        uses: VeryGoodOpenSource/very_good_coverage@v2
+      - name: Setup LCOV
+        uses: hrishikesh-kadam/setup-lcov@v1
+      
+      - name: Report code coverage
+        uses: zgosalvez/github-actions-report-lcov@v3
         with:
-          path: ${{inputs.working_directory}}/coverage/lcov.info
-          exclude: ${{inputs.coverage_excludes}}
-          min_coverage: ${{inputs.min_coverage}}
+          title-prefix: "<< ${{ inputs.prefix }} >>"
+          coverage-files: ${{inputs.working_directory}}/coverage/lcov.info
+          minimum-coverage: ${{inputs.min_coverage}}
+          artifact-name: code-coverage-report
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          update-comment: true
+
